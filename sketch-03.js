@@ -12,18 +12,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight); // Pantalla completa del dispositivo
 
-  // Configuración de la captura de video utilizando DroidCam
-  video = createCapture({
-    video: {
-      mandatory: {
-        minWidth: 640,
-        minHeight: 480,
-        maxWidth: 1280,
-        maxHeight: 720,
-      },
-    },
-    audio: false, // DroidCam no transmite audio aquí
-  });
+  // Configuración de la captura de video
+  video = createCapture(VIDEO); // Inicia la captura de video
   video.size(width, height); // Ajusta el tamaño del video al canvas
   video.hide(); // Oculta el video para que no se vea directamente en la pantalla
 
@@ -40,8 +30,8 @@ function setup() {
 function draw() {
   background(220); // Fondo gris claro
 
-  // Dibuja el video capturado
-  // image(video, 0, 0, width, height);
+  // Dibuja el video (opcional, para ver el video capturado)
+  image(video, 0, 0, width, height);
 
   // Dibuja la imagen de Juanito en la posición actual
   imageMode(CENTER);
@@ -51,30 +41,30 @@ function draw() {
   if (poses.length > 0) {
     let pose = poses[0].pose; // Primera pose detectada
 
-    // Dibuja los keypoints de interés
+    // Dibuja los keypoints de nariz, ojos y hombros
+    drawKeypoint(pose.keypoints[0], "Nariz"); // Nariz
+    drawKeypoint(pose.keypoints[1], "Ojo Izq"); // Ojo izquierdo
+    drawKeypoint(pose.keypoints[2], "Ojo Der"); // Ojo derecho
     drawKeypoint(pose.keypoints[5], "Hombro Izq"); // Hombro izquierdo
     drawKeypoint(pose.keypoints[6], "Hombro Der"); // Hombro derecho
 
-    // Dibuja la línea entre los hombros con ancho 10px y color rojo
-    drawLineWithStyle(
-      pose.keypoints[5],
-      pose.keypoints[6],
-      10,
-      color(255, 0, 0)
-    );
+    // Obtén la posición promedio del cuerpo (nariz y hombros)
+    let noseY = pose.keypoints[0].position.y; // Nariz
+    let rightShoulderY = pose.keypoints[6].position.y; // Hombro derecho
+    let leftShoulderY = pose.keypoints[5].position.y; // Hombro izquierdo
+    let shoulderY = (rightShoulderY + leftShoulderY) / 2; // Promedio de hombros
 
-    // Calcula la distancia entre los hombros
-    let leftShoulderX = pose.keypoints[5].position.x; // Coordenada X del hombro izquierdo
-    let rightShoulderX = pose.keypoints[6].position.x; // Coordenada X del hombro derecho
-    let shoulderDistance = dist(leftShoulderX, 0, rightShoulderX, 0); // Distancia en X entre los hombros
+    // Determina la proximidad del cuerpo al borde superior
+    let proximity = min(noseY, shoulderY);
 
-    // Determina la proximidad de Juanito al borde superior o inferior
-    if (shoulderDistance > width / 4) {
-      // Si la distancia es mayor, Juanito se aproxima al borde superior
-      juanitoY -= map(shoulderDistance, width / 4, width / 2, 1, 5); // Velocidad proporcional
-    } else if (shoulderDistance < width / 6) {
-      // Si la distancia es menor, Juanito se aproxima al borde inferior
-      juanitoY += map(shoulderDistance, width / 6, width / 4, 5, 1); // Velocidad proporcional
+    // Mueve a Juanito hacia arriba si el cuerpo está cerca del borde superior
+    if (proximity < height / 3) {
+      juanitoY -= map(proximity, 0, height / 3, 5, 1); // Velocidad proporcional
+    }
+
+    // Mueve a Juanito hacia abajo si el cuerpo está más lejos del borde superior
+    if (proximity > height / 2) {
+      juanitoY += map(proximity, height / 2, height, 1, 5);
     }
 
     // Limita la posición de Juanito dentro de la pantalla
@@ -96,20 +86,6 @@ function drawKeypoint(keypoint, label) {
     fill(0);
     textSize(14);
     text(label, keypoint.position.x + 10, keypoint.position.y); // Dibuja la etiqueta
-  }
-}
-
-// Dibuja una línea entre dos keypoints con estilo personalizado
-function drawLineWithStyle(keypoint1, keypoint2, weight, col) {
-  if (keypoint1.score > 0.5 && keypoint2.score > 0.5) {
-    stroke(col);
-    strokeWeight(weight);
-    line(
-      keypoint1.position.x,
-      keypoint1.position.y,
-      keypoint2.position.x,
-      keypoint2.position.y
-    );
   }
 }
 

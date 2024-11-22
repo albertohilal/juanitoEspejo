@@ -25,7 +25,7 @@ function setup() {
     audio: false, // DroidCam no transmite audio aquí
   });
   video.size(width, height); // Ajusta el tamaño del video al canvas
-  video.hide(); // Oculta el video para que no se vea directamente en la pantalla
+  video.hide(); // Oculta el video si no deseas mostrarlo directamente en la pantalla
 
   // Carga el modelo PoseNet con el video como fuente
   poseNet = ml5.poseNet(video, modelReady);
@@ -40,8 +40,8 @@ function setup() {
 function draw() {
   background(220); // Fondo gris claro
 
-  // Dibuja el video capturado
-  // image(video, 0, 0, width, height);
+  // Dibuja el video capturado (opcional)
+  image(video, 0, 0, width, height);
 
   // Dibuja la imagen de Juanito en la posición actual
   imageMode(CENTER);
@@ -52,16 +52,18 @@ function draw() {
     let pose = poses[0].pose; // Primera pose detectada
 
     // Dibuja los keypoints de interés
+    drawKeypoint(pose.keypoints[0], "Nariz"); // Nariz
+    drawKeypoint(pose.keypoints[1], "Ojo Izq"); // Ojo izquierdo
+    drawKeypoint(pose.keypoints[2], "Ojo Der"); // Ojo derecho
     drawKeypoint(pose.keypoints[5], "Hombro Izq"); // Hombro izquierdo
     drawKeypoint(pose.keypoints[6], "Hombro Der"); // Hombro derecho
 
-    // Dibuja la línea entre los hombros con ancho 10px y color rojo
-    drawLineWithStyle(
-      pose.keypoints[5],
-      pose.keypoints[6],
-      10,
-      color(255, 0, 0)
-    );
+    // Dibuja las líneas entre los keypoints
+    drawLine(pose.keypoints[5], pose.keypoints[6]); // Entre hombro izquierdo y derecho
+    drawLine(pose.keypoints[0], pose.keypoints[1]); // Entre nariz y ojo izquierdo
+    drawLine(pose.keypoints[0], pose.keypoints[2]); // Entre nariz y ojo derecho
+    drawLine(pose.keypoints[1], pose.keypoints[5]); // Entre ojo izquierdo y hombro izquierdo
+    drawLine(pose.keypoints[2], pose.keypoints[6]); // Entre ojo derecho y hombro derecho
 
     // Calcula la distancia entre los hombros
     let leftShoulderX = pose.keypoints[5].position.x; // Coordenada X del hombro izquierdo
@@ -99,11 +101,11 @@ function drawKeypoint(keypoint, label) {
   }
 }
 
-// Dibuja una línea entre dos keypoints con estilo personalizado
-function drawLineWithStyle(keypoint1, keypoint2, weight, col) {
+// Dibuja una línea entre dos keypoints si ambos tienen una detección confiable
+function drawLine(keypoint1, keypoint2) {
   if (keypoint1.score > 0.5 && keypoint2.score > 0.5) {
-    stroke(col);
-    strokeWeight(weight);
+    stroke(0, 255, 0);
+    strokeWeight(2);
     line(
       keypoint1.position.x,
       keypoint1.position.y,
