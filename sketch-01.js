@@ -41,9 +41,8 @@ function setup() {
 function draw() {
   background(220); // Fondo gris claro
 
-  // Dibuja el video capturado centrado
-  imageMode(CENTER); // Cambia el modo de origen de la imagen al centro
-  image(video, width / 2, height / 2, width, height); // Dibuja el video centrado
+  // Dibuja el video capturado (opcional)
+  // image(video, 0, 0, width, height);
 
   if (poseProcessor.poses.length > 0) {
     let pose = poseProcessor.poses[0].pose; // Primera pose detectada
