@@ -8,7 +8,7 @@ class PoseProcessor {
   initializePoseDetection() {
     this.poseNet.on("pose", (results) => {
       this.poses = results;
-      console.log(results); // Muestra los resultados en la consola
+   //   console.log(results); // Muestra los resultados en la consola
     });
     
   }
@@ -25,13 +25,12 @@ class PoseProcessor {
         */
       }
     });
-    /*
+    
 
     // Dibuja una línea entre "Hombro Izq" y "Hombro Der"
     const leftShoulder = this.getKeypoint(pose, "Hombro Izq");
     const rightShoulder = this.getKeypoint(pose, "Hombro Der");
-
-
+    /*
       stroke(255, 0, 0); // Color rojo
       strokeWeight(5); // Grosor de la línea
       line(

@@ -1,4 +1,3 @@
-
 let video; // Captura de video
 let poseProcessor; // Procesador de poses
 let juanito; // Instancia del objeto Juanito
@@ -32,7 +31,6 @@ function setup() {
   juanito = new Juanito(width / 2, height / 2, juanitoImg);
 
   // Inicializa PoseProcessor
-
   poseNet = ml5.poseNet(video, modelReady);
   poseProcessor = new PoseProcessor(video, poseNet);
   poseProcessor.initializePoseDetection();
@@ -57,18 +55,17 @@ function draw() {
 
     // Movimiento horizontal basado en la nariz
     let nose = poseProcessor.getKeypoint(pose, "Nariz");
-    if (nose) juanito.moveWithNose(width - nose.position.x, width / 2); // Ajusta las coordenadas x invertidas
+    if (nose) juanito.moveWithNose(width - nose.position.x); // Ajusta las coordenadas x invertidas
 
     // Movimiento vertical basado en los hombros
     let leftShoulder = poseProcessor.getKeypoint(pose, "Hombro Izq");
     let rightShoulder = poseProcessor.getKeypoint(pose, "Hombro Der");
     if (leftShoulder && rightShoulder) {
-      // Ajusta las coordenadas x invertidas de los hombros
-      leftShoulder.position.x = width - leftShoulder.position.x;
-      rightShoulder.position.x = width - rightShoulder.position.x;
-
+      // Calcula la distancia entre los hombros
       let shoulderDistance = poseProcessor.getDistance(leftShoulder, rightShoulder);
-      juanito.moveWithShoulders(shoulderDistance, width / 4, width / 6);
+
+      // Llama al método en Juanito para manejar el movimiento vertical
+      juanito.moveWithShoulders(shoulderDistance);
     }
   }
 
@@ -76,7 +73,6 @@ function draw() {
   juanito.constrain(width, height);
   juanito.draw();
 }
-
 
 function modelReady() {
   console.log("PoseNet model loaded");
