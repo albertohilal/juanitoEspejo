@@ -41,9 +41,13 @@ function setup() {
 function draw() {
   background(220); // Fondo gris claro
 
-  // Dibuja el video capturado centrado
-  imageMode(CENTER); // Cambia el modo de origen de la imagen al centro
-  image(video, width / 2, height / 2, width, height); // Dibuja el video centrado
+  // Voltea el video horizontalmente para que coincida con el movimiento del usuario
+  push(); // Guarda el estado del lienzo
+  translate(width, 0); // Mueve el origen al borde derecho del lienzo
+  scale(-1, 1); // Invierte horizontalmente el video
+  imageMode(CORNER); // Cambia el modo de origen de la imagen a la esquina
+  //image(video, 0, 0, width, height); // Dibuja el video invertido
+  pop(); // Restaura el estado original del lienzo
 
   if (poseProcessor.poses.length > 0) {
     let pose = poseProcessor.poses[0].pose; // Primera pose detectada
@@ -53,12 +57,16 @@ function draw() {
 
     // Movimiento horizontal basado en la nariz
     let nose = poseProcessor.getKeypoint(pose, "Nariz");
-    if (nose) juanito.moveWithNose(nose.position.x, width / 2);
+    if (nose) juanito.moveWithNose(width - nose.position.x, width / 2); // Ajusta las coordenadas x invertidas
 
     // Movimiento vertical basado en los hombros
     let leftShoulder = poseProcessor.getKeypoint(pose, "Hombro Izq");
     let rightShoulder = poseProcessor.getKeypoint(pose, "Hombro Der");
     if (leftShoulder && rightShoulder) {
+      // Ajusta las coordenadas x invertidas de los hombros
+      leftShoulder.position.x = width - leftShoulder.position.x;
+      rightShoulder.position.x = width - rightShoulder.position.x;
+
       let shoulderDistance = poseProcessor.getDistance(leftShoulder, rightShoulder);
       juanito.moveWithShoulders(shoulderDistance, width / 4, width / 6);
     }
@@ -68,6 +76,7 @@ function draw() {
   juanito.constrain(width, height);
   juanito.draw();
 }
+
 
 function modelReady() {
   console.log("PoseNet model loaded");

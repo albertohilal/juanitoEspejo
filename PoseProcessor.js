@@ -18,11 +18,14 @@ class PoseProcessor {
     // Dibuja los keypoints individuales
     pose.keypoints.forEach((keypoint) => {
       if (keypoint.score > 0.5) {
+        /*
         fill(255, 0, 0);
         noStroke();
         ellipse(keypoint.position.x, keypoint.position.y, 20, 20);
+        */
       }
     });
+    /*
 
     // Dibuja una línea entre "Hombro Izq" y "Hombro Der"
     const leftShoulder = this.getKeypoint(pose, "Hombro Izq");
@@ -37,6 +40,7 @@ class PoseProcessor {
         rightShoulder.position.x,
         rightShoulder.position.y
       );
+      */
     
   }
 

@@ -3,7 +3,7 @@ class Juanito {
     this.x = x;
     this.y = y;
     this.img = img;
-    this.speedY = 15; // Velocidad solo para el movimiento vertical
+    this.speedY = 30; // Velocidad solo para el movimiento vertical
   }
 
   // Dibuja a Juanito en su posición actual
