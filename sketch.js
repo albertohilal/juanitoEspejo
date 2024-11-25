@@ -1,18 +1,19 @@
-let video; // Captura de video
+let video; // Variable para la captura de video
 let poseProcessor; // Procesador de poses
 let juanito; // Instancia del objeto Juanito
-let juanitoImg; // Imagen de Juanito
+let juanitoImg; // Imagen para el objeto Juanito
 let poseNet; // Modelo PoseNet de ml5.js
 
 function preload() {
-  // Carga la imagen del cuerpo de Juanito
+  // Carga la imagen de Juanito antes de iniciar el programa
   juanitoImg = loadImage("images/body.png");
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight); // Pantalla completa del dispositivo
+  // Crea un canvas del tamaño de la ventana
+  createCanvas(windowWidth, windowHeight);
 
-  // Configuración de la captura de video utilizando DroidCam
+  // Configura la captura de video
   video = createCapture({
     video: {
       mandatory: {
@@ -22,58 +23,48 @@ function setup() {
         maxHeight: 720,
       },
     },
-    audio: false, // DroidCam no transmite audio aquí
+    audio: false // DroidCam no transmite audio aquí
   });
-  video.size(width, height); // Ajusta el tamaño del video al canvas
-  video.hide(); // Oculta el video para que no se vea directamente en la pantalla
+  video.size(width, height); // Ajusta el tamaño del video al tamaño del canvas
+  video.hide(); // Oculta la visualización directa del video
 
-  // Crea una instancia de Juanito
+  // Instancia el objeto Juanito
   juanito = new Juanito(width / 2, height / 2, juanitoImg);
 
-  // Inicializa PoseProcessor
+  // Inicializa PoseNet con el video
   poseNet = ml5.poseNet(video, modelReady);
   poseProcessor = new PoseProcessor(video, poseNet);
   poseProcessor.initializePoseDetection();
 }
 
 function draw() {
-  background(220); // Fondo gris claro
+  background(220); // Fija el color de fondo del canvas
 
   // Voltea el video horizontalmente para que coincida con el movimiento del usuario
-  push(); // Guarda el estado del lienzo
-  translate(width, 0); // Mueve el origen al borde derecho del lienzo
-  scale(-1, 1); // Invierte horizontalmente el video
-  imageMode(CORNER); // Cambia el modo de origen de la imagen a la esquina
-  //image(video, 0, 0, width, height); // Dibuja el video invertido
-  pop(); // Restaura el estado original del lienzo
+  push();
+  translate(width, 0);
+  scale(-1, 1);
+  pop();
 
+  // Verifica si hay poses detectadas
   if (poseProcessor.poses.length > 0) {
-    let pose = poseProcessor.poses[0].pose; // Primera pose detectada
+    let pose = poseProcessor.poses[0].pose; // Obtiene la primera pose detectada
 
-    // Dibuja los keypoints
-    poseProcessor.drawKeypoints(pose);
-
-    // Movimiento horizontal basado en la nariz
+    // Calcula la posición y movimientos de Juanito basados en la pose
     let nose = poseProcessor.getKeypoint(pose, "Nariz");
-    if (nose) juanito.moveWithNose(width - nose.position.x); // Ajusta las coordenadas x invertidas
-
-    // Movimiento vertical basado en los hombros
     let leftShoulder = poseProcessor.getKeypoint(pose, "Hombro Izq");
     let rightShoulder = poseProcessor.getKeypoint(pose, "Hombro Der");
-    if (leftShoulder && rightShoulder) {
-      // Calcula la distancia entre los hombros
+    if (nose && leftShoulder && rightShoulder) {
       let shoulderDistance = poseProcessor.getDistance(leftShoulder, rightShoulder);
-
-      // Llama al método en Juanito para manejar el movimiento vertical
-      juanito.moveWithShoulders(shoulderDistance);
+      juanito.updatePosition(width - nose.position.x, shoulderDistance);
     }
   }
 
-  // Restringe y dibuja a Juanito
+  // Restringe y dibuja a Juanito dentro de los límites del canvas
   juanito.constrain(width, height);
   juanito.draw();
 }
 
 function modelReady() {
-  console.log("PoseNet model loaded");
+  console.log("PoseNet model loaded"); // Confirma que PoseNet está listo
 }
