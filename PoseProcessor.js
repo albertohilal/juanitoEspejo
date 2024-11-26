@@ -24,7 +24,7 @@ class PoseProcessor {
         noStroke();
         // Dibuja reflejando la posición horizontal (x) para coincidir con el video
         const reflectedX = width - keypoint.position.x;
-        ellipse(reflectedX, keypoint.position.y, 10, 10); // Dibuja el punto
+      //  ellipse(reflectedX, keypoint.position.y, 20, 20); // Dibuja el punto
       }
     });
 
@@ -35,10 +35,11 @@ class PoseProcessor {
     if (leftShoulder && rightShoulder) {
       stroke(255, 0, 0); // Color rojo para la línea
       strokeWeight(10); // Grosor de la línea
+      /*
       line(
         width - leftShoulder.position.x, leftShoulder.position.y,
         width - rightShoulder.position.x, rightShoulder.position.y
-      );
+      );*/
     }
   }
 

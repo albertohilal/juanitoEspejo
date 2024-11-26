@@ -4,7 +4,7 @@ class Juanito {
     this.y = y; // Posición vertical
     this.img = img; // Imagen
     this.previousShoulderDistance = null; // Inicializa con null
-    this.movingDirection = null; // Dirección actual del movimiento ("up" o "down")
+    this.movingDirection = "none"; // Dirección inicial
   }
 
   // Dibuja a Juanito en su posición actual
@@ -13,46 +13,59 @@ class Juanito {
     image(this.img, this.x, this.y);
   }
 
-  // Actualiza la posición horizontal de Juanito si noseX ha variado al menos 5px
+  // Actualiza la posición horizontal de Juanito para que coincida con noseX
   moveWithNose(noseX) {
-    if (abs(this.x - noseX) > 5) {
+    if (Math.abs(this.x - noseX) > 5) { // Solo mueve si el cambio es mayor a 5 px
       this.x = noseX;
     }
   }
 
   // Mueve a Juanito verticalmente según los cambios en la distancia entre los hombros
   moveWithShoulders(shoulderDistance) {
-    console.log("Diferencia entre hombros:", this.previousShoulderDistance - shoulderDistance);
-
     if (this.previousShoulderDistance !== null) {
-      if (shoulderDistance > this.previousShoulderDistance) {
-        this.movingDirection = "up"; // Cambia dirección a "up"
-      } else if (shoulderDistance < this.previousShoulderDistance ) {
-        this.movingDirection = "down"; // Cambia dirección a "down"
+      const margin = 0.1 * this.previousShoulderDistance; // Margen del 10%
+      console.log("Diferencia entre hombros:", this.previousShoulderDistance - shoulderDistance);
+
+      // Si la dirección actual es "up", continúa moviéndose hacia arriba hasta que se detecte un cambio significativo hacia "down"
+      if (this.movingDirection === "up") {
+        this.y -= 50; // Continúa subiendo
+        if (shoulderDistance < this.previousShoulderDistance - margin) {
+          this.movingDirection = "down"; // Cambia dirección a "down"
+          console.log("Cambio de dirección a: down");
+        }
       }
 
-      // Continúa moviendo en la dirección actual
-      if (this.movingDirection === "up") {
-        this.y -= 50; // Reduce this.y mientras shoulderDistance aumenta
-        if (shoulderDistance < this.previousShoulderDistance) {
-          this.movingDirection = null; // Detén el movimiento hacia arriba
+      // Si la dirección actual es "down", continúa moviéndose hacia abajo hasta que se detecte un cambio significativo hacia "up"
+      else if (this.movingDirection === "down") {
+        this.y += 50; // Continúa bajando
+        if (shoulderDistance > this.previousShoulderDistance + margin) {
+          this.movingDirection = "up"; // Cambia dirección a "up"
+          console.log("Cambio de dirección a: up");
         }
-      } else if (this.movingDirection === "down") {
-        this.y += 50; // Incrementa this.y mientras shoulderDistance disminuye
-        if (shoulderDistance > this.previousShoulderDistance) {
-          this.movingDirection = null; // Detén el movimiento hacia abajo
+      }
+
+      // Si no hay una dirección definida, evalúa si iniciar movimiento hacia arriba o abajo
+      else {
+        if (shoulderDistance > this.previousShoulderDistance + margin) {
+          this.movingDirection = "up"; // Inicia movimiento hacia arriba
+          console.log("Inicia movimiento hacia: up");
+        } else if (shoulderDistance < this.previousShoulderDistance - margin) {
+          this.movingDirection = "down"; // Inicia movimiento hacia abajo
+          console.log("Inicia movimiento hacia: down");
+        } else {
+          console.log("Dentro del margen de oscilación, posición Y no cambia.");
         }
       }
     }
 
-    // Actualiza la distancia anterior con la actual
+    // Actualiza la distancia anterior con la distancia actual
     this.previousShoulderDistance = shoulderDistance;
-    console.log("Posición Y de Juanito:", this.y);
+    console.log("Posición Y de Juanito:", this.y, "Dirección:", this.movingDirection);
   }
 
   // Restringe a Juanito dentro de los límites del canvas
   constrain(canvasWidth, canvasHeight) {
     this.x = constrain(this.x, 0 + this.img.width / 2, canvasWidth - this.img.width / 2);
-    this.y = constrain(this.y, 0, canvasHeight);
+    this.y = constrain(this.y, 0 + this.img.height / 2, canvasHeight - this.img.height / 2);
   }
 }

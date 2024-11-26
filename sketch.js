@@ -12,6 +12,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight); // Pantalla completa del dispositivo
 
+  
+
   // Configuración de la captura de video utilizando DroidCam
   video = createCapture({
     video: {
@@ -24,7 +26,8 @@ function setup() {
     },
     audio: false, // DroidCam no transmite audio aquí
   });
-  video.size(width, height); // Ajusta el tamaño del video al canvas
+  
+  video.size(windowWidth, windowHeight); // Ajusta el tamaño del video al canvas
   video.hide(); // Oculta el video para que no se vea directamente en la pantalla
 
   // Crea una instancia de Juanito
@@ -44,7 +47,7 @@ function draw() {
   translate(width, 0); // Mueve el origen al borde derecho del lienzo
   scale(-1, 1); // Invierte horizontalmente el video
   imageMode(CORNER); // Cambia el modo de origen de la imagen a la esquina
-  //image(video, 0, 0, width, height); // Dibuja el video invertido
+  //image(video, 0, 0,windowWidth, windowHeight);  // Dibuja el video invertido
   pop(); // Restaura el estado original del lienzo
 
   if (poseProcessor.poses.length > 0) {
