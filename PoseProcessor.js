@@ -35,7 +35,7 @@ class PoseProcessor {
     if (leftShoulder && rightShoulder) {
       stroke(255, 0, 0); // Color rojo para la línea
       strokeWeight(10); // Grosor de la línea
-      /*
+   /*
       line(
         width - leftShoulder.position.x, leftShoulder.position.y,
         width - rightShoulder.position.x, rightShoulder.position.y

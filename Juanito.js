@@ -1,71 +1,77 @@
 class Juanito {
-  constructor(x, y, img) {
+  constructor(x, y, img, minY, maxY) {
     this.x = x; // Posición horizontal
     this.y = y; // Posición vertical
     this.img = img; // Imagen
-    this.previousShoulderDistance = null; // Inicializa con null
-    this.movingDirection = "none"; // Dirección inicial
+    this.minY = 0; // Posición vertical mínima
+    this.maxY = windowHeight+img.height; // Posición vertical máxima
+    this.size = img.width; // Tamaño inicial de Juanito basado en la imagen
   }
 
   // Dibuja a Juanito en su posición actual
   draw() {
     imageMode(CENTER);
-    image(this.img, this.x, this.y);
+    image(this.img, this.x, this.y, this.size, this.size);
   }
 
   // Actualiza la posición horizontal de Juanito para que coincida con noseX
   moveWithNose(noseX) {
-    if (Math.abs(this.x - noseX) > 5) { // Solo mueve si el cambio es mayor a 5 px
-      this.x = noseX;
+    const margin = 0.05 * width; // Margen del 5% del ancho del canvas para evitar oscilaciones
+    if (Math.abs(this.x - noseX) > margin) {
+      this.x = constrain(noseX, 0 + this.size / 2, width - this.size / 2); // Limita la posición dentro del canvas
     }
   }
 
-  // Mueve a Juanito verticalmente según los cambios en la distancia entre los hombros
+  // Mueve a Juanito verticalmente según el ancho de los hombros
   moveWithShoulders(shoulderDistance) {
-    if (this.previousShoulderDistance !== null) {
-      const margin = 0.05 * this.previousShoulderDistance; // Margen del 10%
-      console.log("Diferencia entre hombros:", this.previousShoulderDistance - shoulderDistance);
-
-      // Si la dirección actual es "up", continúa moviéndose hacia arriba hasta que se detecte un cambio significativo hacia "down"
-      if (this.movingDirection === "up") {
-        this.y -= 20; // Continúa subiendo
-        if (shoulderDistance < this.previousShoulderDistance - margin) {
-          this.movingDirection = "down"; // Cambia dirección a "down"
-          console.log("Cambio de dirección a: down");
-        }
-      }
-
-      // Si la dirección actual es "down", continúa moviéndose hacia abajo hasta que se detecte un cambio significativo hacia "up"
-      else if (this.movingDirection === "down") {
-        this.y += 20; // Continúa bajando
-        if (shoulderDistance > this.previousShoulderDistance + margin) {
-          this.movingDirection = "up"; // Cambia dirección a "up"
-          console.log("Cambio de dirección a: up");
-        }
-      }
-
-      // Si no hay una dirección definida, evalúa si iniciar movimiento hacia arriba o abajo
-      else {
-        if (shoulderDistance > this.previousShoulderDistance + margin) {
-          this.movingDirection = "up"; // Inicia movimiento hacia arriba
-          console.log("Inicia movimiento hacia: up");
-        } else if (shoulderDistance < this.previousShoulderDistance - margin) {
-          this.movingDirection = "down"; // Inicia movimiento hacia abajo
-          console.log("Inicia movimiento hacia: down");
-        } else {
-          console.log("Dentro del margen de oscilación, posición Y no cambia.");
-        }
-      }
+    // Validar la distancia entre hombros
+    if (shoulderDistance < 50 || shoulderDistance > 1000) {
+      console.warn("Distancia entre hombros fuera de rango:", shoulderDistance);
+      return; // No actualizar si la distancia no es válida
     }
 
-    // Actualiza la distancia anterior con la distancia actual
-    this.previousShoulderDistance = shoulderDistance;
-    console.log("Posición Y de Juanito:", this.y, "Dirección:", this.movingDirection);
+    // Mapea la distancia entre hombros directamente a la posición vertical
+    const mappedY = map(
+      shoulderDistance,
+      50, // Valor mínimo esperado de distancia entre hombros
+      1000, // Valor máximo esperado de distancia entre hombros
+      this.maxY, // Posición más baja en la pantalla
+      this.minY // Posición más alta en la pantalla
+    );
+
+    // Limita la posición vertical mapeada dentro de los límites del canvas
+    this.y = constrain(mappedY, this.minY, this.maxY);
+
+    // Actualiza el tamaño de Juanito basado en la posición vertical
+    this.updateSize();
+
+    console.log(
+      "Posición Y de Juanito:", this.y,
+      "Tamaño de Juanito:", this.size,
+      "Distancia entre hombros:", shoulderDistance
+    );
+  }
+
+  // Actualiza el tamaño de Juanito basado en la posición vertical
+  updateSize() {
+    const calculatedSize = map(
+      this.y,
+      this.minY,
+      this.maxY,
+      this.img.width * 0.1, // Tamaño mínimo de Juanito
+      this.img.width * 2 // Tamaño máximo de Juanito
+    );
+
+    // Asegura un tamaño mínimo razonable
+    this.size = Math.max(
+      calculatedSize,
+      46 / (this.img.height / this.img.width)
+    );
   }
 
   // Restringe a Juanito dentro de los límites del canvas
   constrain(canvasWidth, canvasHeight) {
-    this.x = constrain(this.x, 0 + this.img.width / 2, canvasWidth - this.img.width / 2);
-    this.y = constrain(this.y, 0 + this.img.height / 2, canvasHeight - this.img.height / 2);
+    this.x = constrain(this.x, 0 + this.size / 2, canvasWidth - this.size / 2);
+    this.y = constrain(this.y, 0 + this.size / 2, canvasHeight - this.size / 2);
   }
 }
