@@ -64,7 +64,10 @@ function draw() {
     let leftShoulder = poseProcessor.getKeypoint(pose, "Hombro Izq");
     let rightShoulder = poseProcessor.getKeypoint(pose, "Hombro Der");
     if (leftShoulder && rightShoulder) {
-      let shoulderDistance = poseProcessor.getDistance(leftShoulder, rightShoulder);
+      let shoulderDistance = poseProcessor.getDistance(
+        leftShoulder,
+        rightShoulder
+      );
       juanito.moveWithShoulders(shoulderDistance);
     }
   }
