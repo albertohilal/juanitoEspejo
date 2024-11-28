@@ -41,6 +41,7 @@ function setup() {
 
 function draw() {
   background(220); // Fondo gris claro
+  
 
   // Voltea el video horizontalmente para que coincida con el movimiento del usuario
   push(); // Guarda el estado del lienzo

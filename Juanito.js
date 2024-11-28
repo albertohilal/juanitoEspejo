@@ -23,12 +23,12 @@ class Juanito {
   // Mueve a Juanito verticalmente según los cambios en la distancia entre los hombros
   moveWithShoulders(shoulderDistance) {
     if (this.previousShoulderDistance !== null) {
-      const margin = 0.1 * this.previousShoulderDistance; // Margen del 10%
+      const margin = 0.05 * this.previousShoulderDistance; // Margen del 10%
       console.log("Diferencia entre hombros:", this.previousShoulderDistance - shoulderDistance);
 
       // Si la dirección actual es "up", continúa moviéndose hacia arriba hasta que se detecte un cambio significativo hacia "down"
       if (this.movingDirection === "up") {
-        this.y -= 50; // Continúa subiendo
+        this.y -= 20; // Continúa subiendo
         if (shoulderDistance < this.previousShoulderDistance - margin) {
           this.movingDirection = "down"; // Cambia dirección a "down"
           console.log("Cambio de dirección a: down");
@@ -37,7 +37,7 @@ class Juanito {
 
       // Si la dirección actual es "down", continúa moviéndose hacia abajo hasta que se detecte un cambio significativo hacia "up"
       else if (this.movingDirection === "down") {
-        this.y += 50; // Continúa bajando
+        this.y += 20; // Continúa bajando
         if (shoulderDistance > this.previousShoulderDistance + margin) {
           this.movingDirection = "up"; // Cambia dirección a "up"
           console.log("Cambio de dirección a: up");
