@@ -25,7 +25,7 @@ class Juanito {
   // Mueve a Juanito verticalmente según el ancho de los hombros
   moveWithShoulders(shoulderDistance) {
     // Validar la distancia entre hombros
-    if (shoulderDistance < 50 || shoulderDistance > 1000) {
+    if (shoulderDistance < 100 || shoulderDistance > 800) {
       console.warn("Distancia entre hombros fuera de rango:", shoulderDistance);
       return; // No actualizar si la distancia no es válida
     }
@@ -33,8 +33,8 @@ class Juanito {
     // Mapea la distancia entre hombros directamente a la posición vertical
     const mappedY = map(
       shoulderDistance,
-      50, // Valor mínimo esperado de distancia entre hombros
-      1000, // Valor máximo esperado de distancia entre hombros
+      150, // Valor mínimo esperado de distancia entre hombros
+      650, // Valor máximo esperado de distancia entre hombros
       this.maxY, // Posición más baja en la pantalla
       this.minY // Posición más alta en la pantalla
     );

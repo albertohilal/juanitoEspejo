@@ -36,7 +36,7 @@ function setup() {
   poseProcessor = new PoseProcessor(video, poseNet);
   poseProcessor.initializePoseDetection();
 
-  frameRate(30); // Configura un frame rate más bajo para optimizar el rendimiento
+  frameRate(60); // Configura un frame rate más bajo para optimizar el rendimiento
 }
 
 function draw() {
