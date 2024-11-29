@@ -2,34 +2,45 @@ let video; // Captura de video
 let poseProcessor; // Procesador de poses
 let juanito; // Instancia del objeto Juanito
 let juanitoImg; // Imagen de Juanito
+let avion; // Instancia del avión
 let poseNet; // Modelo PoseNet de ml5.js
+let cielo, PlazaMayo, canvas;
 
 function preload() {
   // Carga la imagen del cuerpo de Juanito
   juanitoImg = loadImage("images/body.png");
+  cielo = loadImage(
+    windowWidth <= 1000 ? "images/cieloMovil.webp" : "images/cielo.png"
+  );
+  PlazaMayo = loadImage(
+    windowWidth <= 1000 ? "images/PlazaMayoMovil.webp" : "images/PlazaMayo.webp"
+  );
+  avion = new Avion("images/avion.png"); // Carga la clase Avion con su imagen
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight); // Pantalla completa del dispositivo
 
-  // Configuración de la captura de video con resolución ajustada
+  // Configuración de la captura de video
   video = createCapture({
     video: {
       mandatory: {
-        minWidth: 320, // Ancho mínimo reducido para mejor rendimiento
-        minHeight: 240, // Altura mínima
-        maxWidth: 640, // Ancho máximo
-        maxHeight: 480, // Altura máxima
+        minWidth: 320,
+        minHeight: 240,
+        maxWidth: 640,
+        maxHeight: 480,
       },
     },
-    audio: false, // DroidCam no transmite audio aquí
+    audio: false,
   });
-
   video.size(windowWidth, windowHeight); // Ajusta la resolución del video capturado
   video.hide(); // Oculta el video para que no se vea directamente en la pantalla
 
   // Crea una instancia de Juanito
   juanito = new Juanito(width / 2, height / 2, juanitoImg);
+
+  // Inicializa la posición del avión
+  avion.init(width / 2, height * 0.4);
 
   // Inicializa PoseProcessor
   poseNet = ml5.poseNet(video, modelReady);
@@ -42,13 +53,9 @@ function setup() {
 function draw() {
   background(220); // Fondo gris claro
 
-  // Voltea el video horizontalmente para que coincida con el movimiento del usuario
-  push();
-  translate(width, 0);
-  scale(-1, 1);
-  imageMode(CORNER);
-  //image(video, 0, 0, width, height); // Dibuja el video en el canvas
-  pop();
+  // Dibuja el avión
+  avion.update(frameCount, height); // Llama a update del avión
+  avion.draw(); // Llama a draw del avión
 
   if (poseProcessor.poses.length > 0) {
     let pose = poseProcessor.poses[0].pose; // Primera pose detectada
