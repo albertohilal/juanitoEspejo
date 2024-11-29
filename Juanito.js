@@ -3,8 +3,8 @@ class Juanito {
     this.x = x; // Posición horizontal
     this.y = y; // Posición vertical
     this.img = img; // Imagen
-    this.minY = 0; // Posición vertical mínima
-    this.maxY = windowHeight+img.height; // Posición vertical máxima
+    this.minY = 650; // Posición vertical mínima
+    this.maxY = windowHeight + img.height; // Posición vertical máxima
     this.size = img.width; // Tamaño inicial de Juanito basado en la imagen
   }
 
@@ -46,9 +46,12 @@ class Juanito {
     this.updateSize();
 
     console.log(
-      "Posición Y de Juanito:", this.y,
-      "Tamaño de Juanito:", this.size,
-      "Distancia entre hombros:", shoulderDistance
+      "Posición Y de Juanito:",
+      this.y,
+      "Tamaño de Juanito:",
+      this.size,
+      "Distancia entre hombros:",
+      shoulderDistance
     );
   }
 
@@ -71,7 +74,7 @@ class Juanito {
 
   // Restringe a Juanito dentro de los límites del canvas
   constrain(canvasWidth, canvasHeight) {
-    this.x = constrain(this.x, 0 + this.size / 2, canvasWidth - this.size / 2);
+    this.x = constrain(this.x, 400, 1150);
     this.y = constrain(this.y, 0 + this.size / 2, canvasHeight - this.size / 2);
   }
 }

@@ -11,7 +11,7 @@ class Avion {
 
   // Inicializa la posición del avión
   init() {
-    this.x = width / 2; // Centra el avión horizontalmente
+    this.x = width * 0.45; // Centra el avión horizontalmente
     this.y = height * 0.4; // Coloca el avión a cierta altura inicial
   }
 

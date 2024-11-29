@@ -4,17 +4,15 @@ let juanito; // Instancia del objeto Juanito
 let juanitoImg; // Imagen de Juanito
 let avion; // Instancia del avión
 let poseNet; // Modelo PoseNet de ml5.js
-let cielo, PlazaMayo, canvas;
+//let cielo;
+let PlazaMayo;
+let canvas;
 
 function preload() {
   // Carga la imagen del cuerpo de Juanito
   juanitoImg = loadImage("images/body.png");
-  cielo = loadImage(
-    windowWidth <= 1000 ? "images/cieloMovil.webp" : "images/cielo.png"
-  );
-  PlazaMayo = loadImage(
-    windowWidth <= 1000 ? "images/PlazaMayoMovil.webp" : "images/PlazaMayo.webp"
-  );
+  //cielo = loadImage("images/cielo.webp");
+  PlazaMayo = loadImage("images/PlazaMayo.webp");
   avion = new Avion("images/avion.png"); // Carga la clase Avion con su imagen
 }
 
@@ -37,10 +35,10 @@ function setup() {
   video.hide(); // Oculta el video para que no se vea directamente en la pantalla
 
   // Crea una instancia de Juanito
-  juanito = new Juanito(width / 2, height / 2, juanitoImg);
+  juanito = new Juanito(width / 2, height, juanitoImg);
 
   // Inicializa la posición del avión
-  avion.init(width / 2, height * 0.4);
+  avion.init(width * 0.45, height * 0.4);
 
   // Inicializa PoseProcessor
   poseNet = ml5.poseNet(video, modelReady);
@@ -51,7 +49,15 @@ function setup() {
 }
 
 function draw() {
-  background(220); // Fondo gris claro
+  background(129, 173, 222); // Fondo gris claro
+  //image(cielo, 0, 0, width, height);
+  image(
+    PlazaMayo,
+    windowWidth / 2,
+    windowHeight / 2,
+    windowWidth,
+    windowHeight
+  );
 
   // Dibuja el avión
   avion.update(frameCount, height); // Llama a update del avión
@@ -80,7 +86,7 @@ function draw() {
   }
 
   // Restringe y dibuja a Juanito
-  juanito.constrain(width, height);
+  juanito.constrain(width / 2, windowHeight + 200);
   juanito.draw();
 }
 
