@@ -7,6 +7,9 @@ let poseNet; // Modelo PoseNet de ml5.js
 //let cielo;
 let PlazaMayo;
 let canvas;
+let randomBalas = []; // Array para almacenar balas aleatorias
+let balaInterval = 60; // Intervalo de tiempo para generar balas
+let balaCounter = 0; // Contador de balas generadas
 
 function preload() {
   // Carga la imagen del cuerpo de Juanito
@@ -50,6 +53,14 @@ function setup() {
 
 function draw() {
   background(129, 173, 222); // Fondo gris claro
+  /*
+  // Mostrar dimensiones de la pantalla en la parte superior izquierda
+  fill(255,255,0); // Color negro para el texto
+  textSize(60); // Tamaño de texto
+  text(`width: ${width}px`, 100, 100); // Muestra el ancho
+  text(`windowWidth: ${windowWidth}px`, 100, 180); // Muestra el ancho
+  text(`Alto: ${height}px`, 100, 260); // Muestra el alto
+  */
   //image(cielo, 0, 0, width, height);
   image(
     PlazaMayo,
@@ -88,6 +99,24 @@ function draw() {
   // Restringe y dibuja a Juanito
   juanito.constrain(width / 2, windowHeight + 200);
   juanito.draw();
+
+  // Generación de balas aleatorias
+  if (frameCount % balaInterval === 0 && balaCounter < 300) {
+    let randomX = random(200, 1500); // Genera una posición aleatoria en X
+    randomBalas.push(new Bala(randomX, 0, 5)); // Crea una nueva bala en posición aleatoria
+    balaCounter++; // Incrementa el contador de balas
+  }
+
+  // Dibuja y actualiza las balas aleatorias
+  for (let i = randomBalas.length - 1; i >= 0; i--) {
+    randomBalas[i].draw();
+    randomBalas[i].update();
+
+    // Elimina las balas que salen de la pantalla
+    if (randomBalas[i].y > height) {
+      randomBalas.splice(i, 1);
+    }
+  }
 }
 
 function modelReady() {

@@ -6,6 +6,7 @@ class Juanito {
     this.minY = 650; // Posición vertical mínima
     this.maxY = windowHeight + img.height; // Posición vertical máxima
     this.size = img.width; // Tamaño inicial de Juanito basado en la imagen
+    this.lastShoulderDistance = null; // Última distancia válida entre los hombros
   }
 
   // Dibuja a Juanito en su posición actual
@@ -29,6 +30,9 @@ class Juanito {
       console.warn("Distancia entre hombros fuera de rango:", shoulderDistance);
       return; // No actualizar si la distancia no es válida
     }
+
+    // Actualiza el registro de la última distancia válida
+    this.lastShoulderDistance = shoulderDistance;
 
     // Mapea la distancia entre hombros directamente a la posición vertical
     const mappedY = map(

@@ -9,7 +9,7 @@ class Bala {
   draw() {
     fill(0); // Color negro
     noStroke(); // Sin contorno
-    circle(this.x, this.y, 6); // Dibuja un círculo representando la bala
+    circle(this.x, this.y, 10); // Dibuja un círculo representando la bala
   }
 
   // Actualiza la posición de la bala según su velocidad
